@@ -63,9 +63,12 @@ app.delete("/api/persons/:id", (request, response) => {
 });
 
 app.post("/api/persons", (req, res) => {
-  console.log("here333");
-  if (!req.body) {
-    return res.status(400).json({ error: "empty post request" });
+  console.log(req.body);
+  if (!req.body.number || !req.body.name) {
+    return res.status(400).json({ error: "Name or number is missing" });
+  }
+  if (persons.find((person) => person.name === req.body.name)) {
+    return res.status(400).json({ error: "name must be unique" });
   }
   const person = {
     id: Math.floor(Math.random() * 2147483647),
