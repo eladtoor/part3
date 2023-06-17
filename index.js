@@ -62,6 +62,20 @@ app.delete("/api/persons/:id", (request, response) => {
   }
 });
 
+app.post("/api/persons", (req, res) => {
+  console.log("here333");
+  if (!req.body) {
+    return res.status(400).json({ error: "empty post request" });
+  }
+  const person = {
+    id: Math.floor(Math.random() * 2147483647),
+    name: req.body.name,
+    number: req.body.number,
+  };
+  persons = persons.concat(person);
+  res.json(person);
+});
+
 const PORT = 3004;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
