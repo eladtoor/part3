@@ -1,6 +1,9 @@
 const express = require("express");
 const app = express();
 var morgan = require("morgan");
+const cors = require("cors");
+
+app.use(cors());
 
 app.use(express.json());
 
@@ -75,7 +78,6 @@ app.delete("/api/persons/:id", (request, response) => {
 });
 
 app.post("/api/persons", (req, res) => {
-  console.log(req.body);
   if (!req.body.number || !req.body.name) {
     return res.status(400).json({ error: "Name or number is missing" });
   }
@@ -88,7 +90,20 @@ app.post("/api/persons", (req, res) => {
     number: req.body.number,
   };
   persons = persons.concat(person);
-  res.json(person);
+
+  return res.json(person);
+});
+
+app.put("/api/persons/:id", (req, res) => {
+  const id = Number(req.params.id);
+  console.log(`${id} ${typeof id} here`);
+  const person = persons.find((person) => person.id === id);
+  const newPerson = { ...person, number: req.body.number };
+  console.log(newPerson);
+  persons = persons.filter((person) => person.id !== id);
+
+  persons = persons.concat(newPerson);
+  res.json(newPerson);
 });
 
 const PORT = 3004;
