@@ -72,16 +72,19 @@ app.post("/api/persons", (req, res) => {
 });
 
 app.put("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  console.log(`${id} ${typeof id} here`);
-  const person = persons.find((person) => person.id === id);
-  const newPerson = { ...person, number: req.body.number };
-  console.log(newPerson);
-  persons = persons.filter((person) => person.id !== id);
+  const body = req.body;
+  const person = {
+    name: body.name,
+    number: body.number,
+  };
 
-  persons = persons.concat(newPerson);
-  res.json(newPerson);
+  Person.findByIdAndUpdate(req.params.id, person, { new: true })
+    .then((updatedPerson) => {
+      res.json(updatedPerson);
+    })
+    .catch((error) => next(error));
 });
+
 const errorHandler = (error, request, response, next) => {
   console.error(error.message);
 
