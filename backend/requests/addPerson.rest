@@ -1,7 +1,4 @@
-POST http://localhost:3004/api/persons/
-content-type: application/json
+get http://localhost:3004/api/persons/6491a3b87f3ebb07ce1f0fe2
 
- {
-    "name": "Elad Abramov",
-    "number": "12-43-234345"
- }
+
+ 
