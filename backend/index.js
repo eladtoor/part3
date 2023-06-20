@@ -27,6 +27,7 @@ app.get("/", (request, response) => {
 
 app.get("/api/persons", (request, response) => {
   Person.find({}).then((persons) => {
+    console.log(persons);
     response.json(persons);
   });
 });
@@ -47,16 +48,12 @@ app.get("/api/persons/:id", (request, response) => {
   }
 });
 
-app.delete("/api/persons/:id", (request, response) => {
-  console.log("here");
-  const id = Number(request.params.id);
-  const person = persons.find((person) => person.id === id);
-  if (person) {
-    persons = persons.filter((person) => person.id !== id);
-    response.status(204).end();
-  } else {
-    response.status(404).end();
-  }
+app.delete("/api/persons/:id", (request, response, next) => {
+  Person.findByIdAndDelete(request.params.id)
+    .then((result) => {
+      response.status(204).end();
+    })
+    .catch((err) => next(err));
 });
 
 app.post("/api/persons", (req, res) => {
@@ -85,7 +82,17 @@ app.put("/api/persons/:id", (req, res) => {
   persons = persons.concat(newPerson);
   res.json(newPerson);
 });
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
 
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
+app.use(errorHandler);
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
